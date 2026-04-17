@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ece-test-harness"
+version = "2026.4.0"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pyyaml",
+    "requests",
+    "autograder-cli",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+ece-grade = "ece_test_harness.main:main"
+ece-init-projects = "ece_test_harness.init_projects:main"
+ece-test-solutions = "ece_test_harness.test_solutions:main"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ece_test_harness = ["*.jl", "*.m"]
