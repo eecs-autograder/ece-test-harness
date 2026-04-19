@@ -20,6 +20,9 @@ course-configs/
 # Ruff
 .ruff_cache/
 
+# Pyright
+.pyright/
+
 # Editor / OS
 .DS_Store
 *.swp

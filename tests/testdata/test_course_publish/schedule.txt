@@ -1,0 +1,7 @@
+course   = EECS 551
+semester = Fall
+year     = 2026
+timezone = America/Detroit
+
+hw1.py   2026/01/13@00:00   2026/01/20@23:59
+hw2.py   2026/01/27@00:00   2026/02/03@23:59

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ece-test-harness"
 version = "2026.4.0"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "pyyaml",
@@ -14,15 +14,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "pyright", "ruff"]
 
 [project.scripts]
 ece-grade = "ece_test_harness.main:main"
-ece-init-projects = "ece_test_harness.init_projects:main"
-ece-test-solutions = "ece_test_harness.test_solutions:main"
+ece-configure-projects = "ece_test_harness.scripts.configure_projects:cli"
+ece-save-projects = "ece_test_harness.scripts.save_projects:cli"
+ece-test-solutions = "ece_test_harness.scripts.test_solutions:cli"
+ece-publish-projects = "ece_test_harness.scripts.publish_projects:cli"
 
 [tool.ruff]
 line-length = 100
+exclude = ["grader_examples/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
