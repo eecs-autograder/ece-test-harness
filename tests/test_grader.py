@@ -1,5 +1,5 @@
-import subprocess
 import shutil
+import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
@@ -37,10 +37,13 @@ def test_fail(name, ext):
     assert code != 0
 
 
-@pytest.mark.parametrize("name,ext,tokens", [
-    pytest.param("template1", ".py", ["os"], marks=pytest.mark.python),
-    pytest.param("template1", ".jl", ["run"], marks=pytest.mark.julia),
-])
+@pytest.mark.parametrize(
+    "name,ext,tokens",
+    [
+        pytest.param("template1", ".py", ["os"], marks=pytest.mark.python),
+        pytest.param("template1", ".jl", ["run"], marks=pytest.mark.julia),
+    ],
+)
 def test_illegal_keywords(name, ext, tokens):
     with blacklisted_submission(name, ext, tokens):
         status, stdout, code = run_grader(str(GRADERS / f"{name}{ext}"))
@@ -56,8 +59,7 @@ def run_grader(submission_path: str) -> tuple[str, str, int]:
         capture_output=True,
         text=True,
     )
-    first_line = result.stdout.strip().split(
-        "\n")[0] if result.stdout.strip() else ""
+    first_line = result.stdout.strip().split("\n")[0] if result.stdout.strip() else ""
     return first_line, result.stdout, result.returncode
 
 

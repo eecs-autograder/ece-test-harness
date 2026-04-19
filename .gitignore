@@ -14,11 +14,15 @@ __pycache__/
 # Pytest
 .pytest_cache/
 
-# Generated course configs
+# Generated course configs (but not test fixtures)
 course-configs/
+!tests/testdata/**/course-configs/
 
 # Ruff
 .ruff_cache/
+
+# Pyright
+.pyright/
 
 # Editor / OS
 .DS_Store

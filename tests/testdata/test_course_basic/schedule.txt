@@ -1,0 +1,18 @@
+course   = EECS 551
+semester = Fall
+year     = 2026
+timezone = America/Detroit
+
+[PY]=os,sys,subprocess,open
+
+# hw1: full grader set
+hw1.py   2026/01/13@00:00   2026/01/20@23:59
+
+# hw2: no grader file — should warn and skip
+hw2.py   2026/01/20@00:00   2026/01/27@23:59
+
+# hw3: has a blacklist
+hw3.py   2026/01/27@00:00   2026/02/03@23:59   [PY],numpy
+
+# hw4: has a dependency library file (hw4lib.py)
+hw4.py   2026/02/03@00:00   2026/02/10@23:59
