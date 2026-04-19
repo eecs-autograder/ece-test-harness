@@ -62,6 +62,35 @@ class Schedule:
     assignments: list[Assignment] = field(default_factory=list)
 
 
+def _apply_group(m: re.Match, groups: dict[str, list[str]]) -> None:
+    key = f"[{m.group(1)}]"
+    groups[key] = _expand_blacklist(m.group(2), groups)
+
+
+def _apply_meta(m: re.Match, schedule: Schedule) -> None:
+    key, value = m.group(1).lower(), m.group(2).strip()
+    if key == "course":
+        schedule.course = value
+    elif key == "semester":
+        schedule.semester = value
+    elif key == "year":
+        try:
+            schedule.year = int(value)
+        except ValueError:
+            pass
+    elif key == "timezone":
+        schedule.timezone = value
+
+
+def _parse_assignment(parts: list[str], groups: dict[str, list[str]]) -> Assignment:
+    return Assignment(
+        filename=parts[0],
+        start_date=_parse_date(parts[1]) if len(parts) > 1 else None,
+        end_date=_parse_date(parts[2]) if len(parts) > 2 else None,
+        blacklist=_expand_blacklist(parts[3], groups) if len(parts) > 3 else [],
+    )
+
+
 def parse_schedule(schedule_path: Path) -> Schedule:
     groups: dict[str, list[str]] = {}
     schedule = Schedule()
@@ -71,35 +100,11 @@ def parse_schedule(schedule_path: Path) -> Schedule:
             stripped = line.strip()
             if not stripped or stripped.startswith(COMMENT_CHAR):
                 continue
-            m = _GROUP_RE.match(stripped)
-            if m:
-                key = f"[{m.group(1)}]"
-                groups[key] = _expand_blacklist(m.group(2), groups)
-                continue
-            m = _META_RE.match(stripped)
-            if m:
-                key, value = m.group(1).lower(), m.group(2).strip()
-                if key == "course":
-                    schedule.course = value
-                elif key == "semester":
-                    schedule.semester = value
-                elif key == "year":
-                    try:
-                        schedule.year = int(value)
-                    except ValueError:
-                        pass
-                elif key == "timezone":
-                    schedule.timezone = value
-                continue
-            parts = stripped.split()
-            filename = parts[0]
-            start_date = _parse_date(parts[1]) if len(parts) > 1 else None
-            end_date = _parse_date(parts[2]) if len(parts) > 2 else None
-            blacklist = _expand_blacklist(parts[3], groups) if len(parts) > 3 else []
-            schedule.assignments.append(
-                Assignment(
-                    filename=filename, start_date=start_date, end_date=end_date, blacklist=blacklist
-                )
-            )
+            if m := _GROUP_RE.match(stripped):
+                _apply_group(m, groups)
+            elif m := _META_RE.match(stripped):
+                _apply_meta(m, schedule)
+            else:
+                schedule.assignments.append(_parse_assignment(stripped.split(), groups))
 
     return schedule

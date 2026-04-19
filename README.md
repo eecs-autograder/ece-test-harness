@@ -1,6 +1,6 @@
 # ECE Test Harness
 
-A test harness made for ECE classes at UM that want to migrate from Brian Moore's autograder software to [[autograder.io]] while making minimal changes to their course materials.
+A test harness made for ECE classes at UM that want to migrate from Brian Moore's autograder software to [Autograder.io](autograder.io) while making minimal changes to their course materials.
 
 **Note:** MATLAB support is not available on Autograder.io due to licensing constraints. The MATLAB code path is retained in the codebase for potential future use (e.g. via Octave), but is untested.
 
@@ -168,9 +168,9 @@ ece-configure-projects --project-settings-defaults project-settings-overrides.ym
 ece-save-projects schedule.txt
 ```
 
-Before pushing each config, `ece-save-projects` stamps in the current `deadline` and `timezone` from `schedule.txt`, so those fields are always authoritative from the schedule file regardless of what's in the YAML. All other fields in the YAML are left as-is, so per-project customizations are preserved across runs.
-
 This calls `ag project save` for each config in `course-configs/`, creating projects that don't exist yet and updating those that do. If any projects exist on the server that are not in the schedule file, a warning is printed.
+
+Before pushing each config, `ece-save-projects` stamps in the current `deadline` and `timezone`, as well as the `course`, `year`, and `semester` fields from the schedule file so those fields are always authoritative from the schedule file regardless of what's in the YAML. All other fields in the YAML are left as-is, so per-project customizations are preserved across runs.
 
 For a new semester, update `semester`, `year`, and the dates in `schedule.txt` and re-run `ece-save-projects` — no need to regenerate configs unless the graders or test setup changed. To add a new assignment mid-semester, add it to `schedule.txt` and run `ece-configure-projects` to generate only its config, then `ece-save-projects` to push everything.
 

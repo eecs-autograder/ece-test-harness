@@ -1,6 +1,7 @@
 project:
-  settings:
-    deadline:
-      cutoff_type: relative
-      deadline: Jan 1, 2000 12:00AM
-      cutoff: 0h0m
+  course:
+    name: ''
+    year: ''
+    semester: ''
+  timezone: ''
+  settings: {}

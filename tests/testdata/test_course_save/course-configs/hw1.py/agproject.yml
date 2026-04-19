@@ -1,4 +1,9 @@
 project:
+  course:
+    name: ''
+    year: ''
+    semester: ''
+  timezone: ''
   settings:
     deadline:
       cutoff_type: relative
