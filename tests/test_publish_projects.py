@@ -119,6 +119,24 @@ def test_already_visible_no_patch(course_dir: Path, capsys: Any) -> None:
     assert "ok" in capsys.readouterr().out
 
 
+def test_hides_project_before_start_date(course_dir: Path) -> None:
+    http = MockHttpClient(
+        courses=[make_course()],
+        projects=[make_project("hw1.py", 101, visible=True)],
+    )
+    run_main(course_dir, http_client=http, now=NOW_BEFORE_HW1_START)
+    assert http.patched.get("/api/projects/101/") == {"visible_to_students": False}
+
+
+def test_already_hidden_before_start_date_no_patch(course_dir: Path) -> None:
+    http = MockHttpClient(
+        courses=[make_course()],
+        projects=[make_project("hw1.py", 101, visible=False)],
+    )
+    run_main(course_dir, http_client=http, now=NOW_BEFORE_HW1_START)
+    assert "/api/projects/101/" not in http.patched
+
+
 # ---------------------------------------------------------------------------
 # Grade publishing
 # ---------------------------------------------------------------------------
@@ -151,6 +169,24 @@ def test_grades_already_revealed_no_patch(course_dir: Path, capsys: Any) -> None
     run_main(course_dir, http_client=http, now=NOW_AFTER_HW1_END)
     assert "/api/projects/101/" not in http.patched
     assert "ok" in capsys.readouterr().out
+
+
+def test_hides_grades_before_end_date(course_dir: Path) -> None:
+    http = MockHttpClient(
+        courses=[make_course()],
+        projects=[make_project("hw1.py", 101, visible=True, hide_grades=False)],
+    )
+    run_main(course_dir, http_client=http, now=NOW_AFTER_HW1_START)
+    assert http.patched.get("/api/projects/101/") == {"hide_ultimate_submission_fdbk": True}
+
+
+def test_already_hiding_grades_before_end_date_no_patch(course_dir: Path) -> None:
+    http = MockHttpClient(
+        courses=[make_course()],
+        projects=[make_project("hw1.py", 101, visible=True, hide_grades=True)],
+    )
+    run_main(course_dir, http_client=http, now=NOW_AFTER_HW1_START)
+    assert "/api/projects/101/" not in http.patched
 
 
 # ---------------------------------------------------------------------------

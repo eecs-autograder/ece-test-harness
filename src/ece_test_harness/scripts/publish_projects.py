@@ -79,6 +79,9 @@ def main(
         if assignment.start_date is not None and now >= assignment.start_date:
             if not project.get("visible_to_students", False):
                 changes["visible_to_students"] = True
+        elif assignment.start_date is not None:
+            if project.get("visible_to_students", False):
+                changes["visible_to_students"] = False
 
         if assignment.end_date is not None and now >= assignment.end_date:
             if project.get("hide_ultimate_submission_fdbk", True):
@@ -95,6 +98,9 @@ def main(
                     )
                 else:
                     changes["hide_ultimate_submission_fdbk"] = False
+        elif assignment.end_date is not None:
+            if not project.get("hide_ultimate_submission_fdbk", True):
+                changes["hide_ultimate_submission_fdbk"] = True
 
         if not changes:
             print(f"ok       {filename}: already up to date")
