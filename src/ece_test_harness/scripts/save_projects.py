@@ -6,8 +6,8 @@ from typing import Any, Protocol
 
 import yaml
 
-from ..schedule import Assignment, format_ag_date, parse_schedule
-from ._protocols import SubprocessHttpClient
+from ._ag_cli_http_client import AgCliHttpClient
+from ._schedule import Assignment, format_ag_date, parse_schedule
 
 
 class HttpClient(Protocol):
@@ -132,7 +132,7 @@ def cli() -> None:
     main(
         Path(args.schedule),
         project_cli=SubprocessProjectCli(),
-        http_client=SubprocessHttpClient(),
+        http_client=AgCliHttpClient(),
     )
 
 

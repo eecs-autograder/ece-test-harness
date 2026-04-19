@@ -4,8 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from ..schedule import parse_schedule
-from ._protocols import HttpClient, SubprocessHttpClient
+from ._ag_cli_http_client import AgCliHttpClient, HttpClient
+from ._schedule import parse_schedule
 
 
 def _parse_closing_time(closing_time: str | None, tz: ZoneInfo) -> datetime | None:
@@ -130,7 +130,7 @@ def cli() -> None:
     args = parser.parse_args()
     main(
         Path(args.schedule),
-        http_client=SubprocessHttpClient(),
+        http_client=AgCliHttpClient(),
         dry_run=args.dry_run,
     )
 

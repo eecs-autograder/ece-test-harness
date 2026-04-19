@@ -9,7 +9,7 @@ import yaml
 from autograder_cli.config.models import ProjectSettings, SingleCmdTestCaseConfig
 from pydantic import BaseModel, ValidationError
 
-from ..schedule import format_ag_date, parse_schedule
+from ._schedule import format_ag_date, parse_schedule
 
 CONFIGS_DIR = Path("course-configs")
 

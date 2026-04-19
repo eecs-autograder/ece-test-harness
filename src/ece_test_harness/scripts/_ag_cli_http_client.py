@@ -8,7 +8,7 @@ class HttpClient(Protocol):
     def patch(self, path: str, data: dict[str, Any]) -> None: ...
 
 
-class SubprocessHttpClient:
+class AgCliHttpClient:
     def get(self, path: str) -> list[dict[str, Any]]:
         result = subprocess.run(
             ["ag", "http", "get", path],

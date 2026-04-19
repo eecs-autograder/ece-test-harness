@@ -6,7 +6,7 @@ from typing import Any, Callable, Protocol
 
 # The ag CLI doesn't support multipart file uploads, so this script uses requests
 # directly to submit solution files. _agclient wraps the shared auth and API helpers.
-from .._agclient import (
+from ._requests_ag_client import (
     DEFAULT_BASE_URL,
     DEFAULT_TOKEN_FILE,
     find_course,
@@ -14,7 +14,7 @@ from .._agclient import (
     get_list,
     make_session,
 )
-from ..schedule import parse_schedule
+from ._schedule import parse_schedule
 
 POLL_INTERVAL = 5
 
