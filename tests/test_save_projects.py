@@ -1,3 +1,4 @@
+import asyncio
 import os
 import shutil
 from collections.abc import Sequence
@@ -16,7 +17,7 @@ class MockProjectCli:
     def __init__(self) -> None:
         self.saved: list[Path] = []
 
-    def save(self, config_file: Path) -> None:
+    async def save(self, config_file: Path) -> None:
         self.saved.append(config_file)
 
 
@@ -52,10 +53,12 @@ def run_main(
     project_cli: MockProjectCli | None = None,
     http_client: MockHttpClient | None = None,
 ) -> None:
-    save_projects.main(
-        Path(schedule),
-        project_cli=project_cli or MockProjectCli(),
-        http_client=http_client or MockHttpClient(),
+    asyncio.run(
+        save_projects.main(
+            Path(schedule),
+            project_cli=project_cli or MockProjectCli(),
+            http_client=http_client or MockHttpClient(),
+        )
     )
 
 
