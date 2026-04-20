@@ -208,8 +208,8 @@ ece-publish-projects schedule.txt
 ```
 
 For each project:
-- If the current time is past the **start date**, `visible_to_students` is set to `True`.
-- If the current time is past the **due date**, `hide_ultimate_submission_fdbk` is set to `False` (revealing final grades). Before doing this, the script verifies that the project's `closing_time` on the server matches the due date in `schedule.txt` — if they differ, the grade publish is skipped with a warning so you can investigate before proceeding.
+- If the current time is past the **start date**, `visible_to_students` is set to `True`. If it is before the start date, `visible_to_students` is set to `False`.
+- If the current time is past the **due date**, `hide_ultimate_submission_fdbk` is set to `False` (revealing final grades). Before doing this, the script verifies that the project's `closing_time` on the server matches the due date in `schedule.txt` — if they differ, the grade publish is skipped with a warning so you can investigate before proceeding. If the current time is before the due date, `hide_ultimate_submission_fdbk` is set to `True`.
 
 Use `--dry-run` to preview what would change without making any API calls.
 
