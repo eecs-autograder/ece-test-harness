@@ -118,8 +118,8 @@ def cli() -> None:
     parser = argparse.ArgumentParser(
         description=(
             "Publish Autograder.io projects based on schedule dates. "
-            "Sets visible_to_students=True for projects whose start date has passed, "
-            "and hide_ultimate_submission_fdbk=False for projects whose due date has passed."
+            "Sets visible_to_students=True after the start date (False before it), "
+            "and hide_ultimate_submission_fdbk=False after the due date (True before it)."
         )
     )
     parser.add_argument(
