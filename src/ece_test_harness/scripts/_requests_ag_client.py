@@ -3,6 +3,8 @@ from typing import Any, cast
 
 import requests
 
+from ._ag_cli_http_client import course_path
+
 DEFAULT_BASE_URL = "https://autograder.io"
 DEFAULT_TOKEN_FILE = "~/.agtoken"
 
@@ -23,15 +25,14 @@ def get(session: requests.Session, base: str, path: str) -> Any:
 def find_course(
     session: requests.Session, base: str, name: str, semester: str, year: int
 ) -> dict[str, Any] | None:
-    courses: list[dict[str, Any]] = get(session, base, "/api/courses/")
-    return next(
-        (
-            c
-            for c in courses
-            if c["name"] == name and c.get("semester") == semester and c.get("year") == year
-        ),
-        None,
-    )
+    # GET /api/courses/ (the list endpoint) is restricted to Autograder.io
+    # superusers, so look the course up by name/semester/year instead --
+    # that endpoint is open to any authenticated user.
+    r = session.get(f"{base}{course_path(name, semester, year)}")
+    if r.status_code == 404:
+        return None
+    r.raise_for_status()
+    return cast(dict[str, Any], r.json())
 
 
 def get_list(session: requests.Session, base: str, path: str) -> list[dict[str, Any]]:

@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from ._ag_cli_http_client import AgCliHttpClient, HttpClient
+from ._ag_cli_http_client import AgCliHttpClient, PatchingHttpClient
 from ._schedule import parse_schedule
 
 
@@ -21,7 +21,7 @@ def _parse_closing_time(closing_time: str | None, tz: ZoneInfo) -> datetime | No
 def main(
     schedule_path: Path,
     *,
-    http_client: HttpClient,
+    http_client: PatchingHttpClient,
     dry_run: bool = False,
     now: datetime | None = None,
 ) -> None:
@@ -30,33 +30,23 @@ def main(
 
     schedule = parse_schedule(schedule_path)
 
-    missing = [
-        f
-        for f, v in [
-            ("course", schedule.course),
-            ("semester", schedule.semester),
-            ("year", schedule.year),
+    if schedule.course is None or schedule.semester is None or schedule.year is None:
+        missing = [
+            f
+            for f, v in [
+                ("course", schedule.course),
+                ("semester", schedule.semester),
+                ("year", schedule.year),
+            ]
+            if v is None
         ]
-        if v is None
-    ]
-    if missing:
         sys.exit(f"error: schedule.txt is missing required field(s): {', '.join(missing)}")
 
     tz = ZoneInfo(schedule.timezone)
     if now is None:
         now = datetime.now(tz).replace(tzinfo=None, second=0, microsecond=0)
 
-    courses = http_client.get("/api/courses/")
-    course = next(
-        (
-            c
-            for c in courses
-            if c["name"] == schedule.course
-            and c.get("semester") == schedule.semester
-            and c.get("year") == schedule.year
-        ),
-        None,
-    )
+    course = http_client.find_course(schedule.course, schedule.semester, schedule.year)
     if course is None:
         sys.exit(
             f"error: course '{schedule.course} {schedule.semester} {schedule.year}'"
