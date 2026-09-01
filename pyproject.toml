@@ -14,7 +14,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pyright", "ruff"]
+# Pinned so lint and test results are reproducible. lint.sh runs whatever
+# pyright pip resolves, so an unpinned toolchain lets a new pyright or numpy
+# release fail CI on a branch that changed nothing -- which is exactly what
+# happened between 2026.4.4 and 2026.4.5. Installing the package itself stays
+# unconstrained; only the dev environment is pinned.
+dev = [
+    "pytest==9.1.1",
+    "pyright==1.1.411",
+    "ruff==0.16.5",
+    "numpy==2.5.2",
+    "autograder-cli==2026.8.0",
+]
 
 [project.scripts]
 ece-grade = "ece_test_harness.main:main"
