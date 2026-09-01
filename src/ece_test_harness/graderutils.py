@@ -26,7 +26,7 @@ PASS = "pass"
 FAIL = "fail"
 ERROR = "error"
 
-_DEFAULT_TOL = 0
+_DEFAULT_TOL = 0.0
 
 
 #
@@ -121,13 +121,11 @@ class NoStdout(contextlib.AbstractContextManager):
 def _runTestCase(testCase, userFcn, solFcn):
     userOut, userTime = _callFcn(userFcn, testCase["args"], testCase["kwargs"])
     solOut, solTime = _callFcn(solFcn, testCase["args"], testCase["kwargs"])
-    # _wrapAsTuple passes None straight through for a function that returns
-    # nothing, so zip() can legitimately be handed None here; that raises
-    # TypeError, which the grader reports as an error for the submission.
-    err = [
-        _computeError(user, sol)
-        for (user, sol) in zip(userOut, solOut)  # pyright: ignore[reportArgumentType]
-    ]
+    # A function that returns nothing yields None rather than an empty tuple
+    userOut = userOut if userOut is not None else ()
+    solOut = solOut if solOut is not None else ()
+    _assertCompatibleNumOutputs(userOut, solOut)
+    err = [_computeError(user, sol) for (user, sol) in zip(userOut, solOut)]
     _applyTestChecks(userOut, testCase["checks"])
     return _generateTestResult(userTime, solTime, err, testCase["tol"])
 
@@ -266,6 +264,20 @@ def _assertCompatibleTypes(user, sol):
             _raiseWrongTypeException()
     else:
         _raiseError("Unsupported output type: %s" % type(sol), exception=ValueError)
+
+
+def _assertCompatibleNumOutputs(user, sol):
+    if not sol:
+        _raiseError(
+            "The solution function returned no outputs, so there is nothing to compare. "
+            "Use reportTestResults() directly to grade a script",
+            exception=ValueError,
+        )
+    if len(user) != len(sol):
+        _raiseError(
+            "Received %d output(s) but expected %d" % (len(user), len(sol)),
+            exception=ValueError,
+        )
 
 
 def _assertCompatibleSizeArrays(user, sol):
