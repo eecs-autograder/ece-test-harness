@@ -6,13 +6,8 @@ from typing import Any, Protocol
 
 import yaml
 
-from ._ag_cli_http_client import AgCliHttpClient
+from ._ag_cli_http_client import AgCliHttpClient, HttpClient
 from ._schedule import Assignment, format_ag_date, parse_schedule
-
-
-class HttpClient(Protocol):
-    def get(self, path: str) -> list[dict[str, Any]]: ...
-
 
 CONFIGS_DIR = Path("course-configs")
 
@@ -143,17 +138,7 @@ async def _save_project(assignment: Assignment, schedule: Any, project_cli: Proj
 def _warn_orphaned_projects(schedule: Any, http_client: HttpClient) -> None:
     expected = {a.filename for a in schedule.assignments}
     try:
-        courses = http_client.get("/api/courses/")
-        course = next(
-            (
-                c
-                for c in courses
-                if c["name"] == schedule.course
-                and c.get("semester") == schedule.semester
-                and str(c.get("year")) == str(schedule.year)
-            ),
-            None,
-        )
+        course = http_client.find_course(schedule.course, schedule.semester, schedule.year)
         if course:
             server_projects = {
                 p["name"] for p in http_client.get(f"/api/courses/{course['pk']}/projects/")

@@ -32,9 +32,17 @@ class MockHttpClient:
         self.patched: dict[str, dict[str, Any]] = {}
 
     def get(self, path: str) -> list[dict[str, Any]]:
-        if path == "/api/courses/":
-            return self._courses
         return self._projects
+
+    def find_course(self, name: str, semester: str, year: int) -> dict[str, Any] | None:
+        return next(
+            (
+                c
+                for c in self._courses
+                if c["name"] == name and c["semester"] == semester and c["year"] == year
+            ),
+            None,
+        )
 
     def patch(self, path: str, data: dict[str, Any]) -> None:
         self.patched[path] = data
