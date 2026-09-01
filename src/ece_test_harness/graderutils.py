@@ -121,7 +121,13 @@ class NoStdout(contextlib.AbstractContextManager):
 def _runTestCase(testCase, userFcn, solFcn):
     userOut, userTime = _callFcn(userFcn, testCase["args"], testCase["kwargs"])
     solOut, solTime = _callFcn(solFcn, testCase["args"], testCase["kwargs"])
-    err = [_computeError(user, sol) for (user, sol) in zip(userOut, solOut)]
+    # _wrapAsTuple passes None straight through for a function that returns
+    # nothing, so zip() can legitimately be handed None here; that raises
+    # TypeError, which the grader reports as an error for the submission.
+    err = [
+        _computeError(user, sol)
+        for (user, sol) in zip(userOut, solOut)  # pyright: ignore[reportArgumentType]
+    ]
     _applyTestChecks(userOut, testCase["checks"])
     return _generateTestResult(userTime, solTime, err, testCase["tol"])
 
@@ -233,7 +239,9 @@ def _standardizeArray(array_like):
         if a.ndim != 2:
             # Must be an array, so we can set shape directly
             a.shape = (_numel(a), 1)
-        elif a.shape[1] > a.shape[0]:
+        # numpy's stubs type .shape as tuple[int] here, but this branch only
+        # runs when a.ndim == 2, so the second axis exists.
+        elif a.shape[1] > a.shape[0]:  # pyright: ignore[reportGeneralTypeIssues]
             # Might be a sparse matrix, so use transpose
             a = a.T
     return a
