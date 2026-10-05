@@ -105,7 +105,7 @@ Navigate to "Course settings" > "Sandbox Images". If your course was cloned from
 
 #### Using custom sandbox images
 
-The "ece-autograder" image is an Ubuntu 24.04 image that comes with Python 3.12 (with numpy) and Julia 1.10 installed, along with this package. If you need additional dependencies for your assignments, you can modify the Dockerfile in this repo accordingly and use the modified file to build the image on Autograder.io. If you do alter the Dockerfile, it's recommended to still name the image "ece-autograder" to be compatible with the `ece-configure-projects` script below.
+The "ece-autograder" image is an Ubuntu 24.04 image that comes with Python 3.12 (with numpy) and the most recent Julia version installed, along with this package. If you need a newer version of Python, update the Dockerfile and rebuild the image. If you need a newer version of Julia, just rebuilding the image will install the newest version. If you need additional dependencies for your assignments, modify the Dockerfile accordingly rebuild the image. If you do alter the Dockerfile, it's recommended to still name the image "ece-autograder" to be compatible with the `ece-configure-projects` script below.
 
 ### Setting up projects on Autograder.io
 
